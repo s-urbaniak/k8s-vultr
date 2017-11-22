@@ -1,0 +1,28 @@
+[Unit]
+Description=Kubernetes API Server
+
+Requires=hyperkube-download.service coreos-metadata.service apiserver.service
+After=network.target hyperkube-download.service coreos-metadata.service apiserver.service
+
+[Service]
+EnvironmentFile=/run/metadata/coreos
+
+ExecStart=/opt/kubernetes/server/bin/hyperkube controller-manager \
+    --address=127.0.0.1 \
+    --cluster-signing-cert-file=/etc/kubernetes/tls/ca.crt \
+    --cluster-signing-key-file=/etc/kubernetes/tls/ca.key \
+    --root-ca-file=/etc/kubernetes/tls/ca.crt \
+    --service-account-private-key-file=/etc/kubernetes/tls/service_account.key \
+    --leader-elect=true \
+    --kubeconfig=/etc/kubernetes/tls/kubeconfig \
+    --cluster-cidr=10.2.0.0/16 \
+    --allocate-node-cidrs=true \
+    --service-cluster-ip-range=10.3.0.0/16 \
+    --feature-gates=PersistentLocalVolumes=true
+
+Restart=on-failure
+# Type=notify # hyperkube seems not to signal
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

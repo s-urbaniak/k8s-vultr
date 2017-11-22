@@ -1,0 +1,21 @@
+[Unit]
+Description=Kubernetes API Server
+
+Requires=hyperkube-download.service coreos-metadata.service apiserver.service
+After=network.target hyperkube-download.service coreos-metadata.service apiserver.service
+
+[Service]
+EnvironmentFile=/run/metadata/coreos
+
+ExecStart=/opt/kubernetes/server/bin/hyperkube proxy \
+    --bind-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+    --hostname-override=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+    --kubeconfig /etc/kubernetes/tls/kubeconfig \
+    --cluster-cidr 10.2.0.0/16
+
+Restart=on-failure
+# Type=notify # hyperkube seems not to signal
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

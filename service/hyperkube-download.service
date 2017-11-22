@@ -1,0 +1,12 @@
+[Unit]
+ConditionPathExists=!/opt/kubernetes/server/bin/hyperkube
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/mkdir -p /opt
+ExecStartPre=/usr/bin/curl --retry 20 -L -o /opt/kubernetes-server-linux-amd64.tar.gz ${hyperkube_url}
+ExecStartPre=/usr/bin/tar xvzf /opt/kubernetes-server-linux-amd64.tar.gz -C /opt
+ExecStart=/usr/bin/echo "Downloaded kubernetes-server"
+
+[Install]
+WantedBy=multi-user.target

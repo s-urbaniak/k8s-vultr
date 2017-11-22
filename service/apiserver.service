@@ -1,0 +1,47 @@
+[Unit]
+Description=Kubernetes API Server
+
+Requires=hyperkube-download.service coreos-metadata.service
+After=network.target hyperkube-download.service coreos-metadata.service
+
+[Service]
+EnvironmentFile=/run/metadata/coreos
+
+ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
+    --bind-address=0.0.0.0 \
+    --advertise-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+    --secure-port=443 \
+    --insecure-port=0 \
+    \
+    --etcd-quorum-read=true \
+    --etcd-servers=${etcd_servers} \
+    --etcd-cafile=/etc/ssl/etcd/ca.crt \
+    --etcd-certfile=/etc/kubernetes/tls/api_etcd_client.crt \
+    --etcd-keyfile=/etc/kubernetes/tls/api_etcd_client.key \
+    --storage-backend=etcd3 \
+    \
+    --tls-ca-file=/etc/kubernetes/tls/ca.crt \
+    --tls-cert-file=/etc/kubernetes/tls/apiserver.crt \
+    --tls-private-key-file=/etc/kubernetes/tls/apiserver.key \
+    \
+    --client-ca-file=/etc/kubernetes/tls/ca.crt \
+    \
+    --kubelet-client-certificate=/etc/kubernetes/tls/api_kubelet_client.crt \
+    --kubelet-client-key=/etc/kubernetes/tls/api_kubelet_client.key \
+    \
+    --service-account-key-file=/etc/kubernetes/tls/service_account.crt \
+    \
+    --authorization-mode=RBAC \
+    --anonymous-auth=false \
+    --allow-privileged=true \
+    --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+    \
+    --service-cluster-ip-range=${service_cidr} \
+    \
+    --feature-gates=PersistentLocalVolumes=true
+
+Type=notify
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
