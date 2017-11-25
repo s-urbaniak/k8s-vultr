@@ -16,9 +16,11 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube kubelet \
   --kubeconfig=/etc/kubernetes/tls/kubeconfig \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --require-kubeconfig=true \
+  --authentication-token-webhook=true  \
   \
   --anonymous-auth=false \
   --client-ca-file=/etc/kubernetes/tls/ca.crt \
+  --authorization-mode=Webhook \
   \
   --cluster-dns=10.3.0.10 \
   --cluster-domain=cluster.local \

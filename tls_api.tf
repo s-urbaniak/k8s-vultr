@@ -86,8 +86,8 @@ resource "tls_cert_request" "api_kubelet" {
   private_key_pem = "${tls_private_key.api_kubelet.private_key_pem}"
 
   subject {
-    common_name  = "kube-apiserver"
-    organization = "kube-master"
+    common_name  = "apiserver"
+    organization = "system:masters"
   }
 }
 
