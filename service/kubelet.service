@@ -11,8 +11,6 @@ EnvironmentFile=/run/metadata/coreos
 ExecStart=/opt/kubernetes/server/bin/hyperkube kubelet \
   --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
   --hostname-override=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
-  --read-only-port=0 \
-  \
   --kubeconfig=/etc/kubernetes/tls/kubeconfig \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --require-kubeconfig=true \
