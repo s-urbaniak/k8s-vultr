@@ -309,18 +309,6 @@ data "ignition_file" "service_account_key" {
   }
 }
 
-data "template_file" "kubeconfig" {
-  template = "${file("${path.module}/resources/kubeconfig")}"
-
-  vars = {
-    cluster_name = "cluster-${local.cluster_name}"
-    kube_ca_cert = "${base64encode(tls_self_signed_cert.kube_ca.cert_pem)}"
-    admin_cert   = "${base64encode(tls_locally_signed_cert.admin.cert_pem)}"
-    admin_key    = "${base64encode(tls_private_key.admin.private_key_pem)}"
-    server       = "https://api-${local.cluster_name}.${var.cluster_base_domain}"
-  }
-}
-
 data "ignition_file" "kubeconfig" {
   path       = "/etc/kubernetes/tls/kubeconfig"
   mode       = 0400

@@ -17,19 +17,6 @@ spec:
     protocol: TCP
 ---
 apiVersion: v1
-kind: Endpoints
-metadata:
-  name: kube-scheduler
-  namespace: kube-system
-subsets:
-- addresses:
-  - ip: ${ip}
-  ports:
-  - name: http-metrics
-    port: 10251
-    protocol: TCP
----
-apiVersion: v1
 kind: Service
 metadata:
   namespace: kube-system
@@ -50,11 +37,24 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
+  name: kube-scheduler
+  namespace: kube-system
+subsets:
+- addresses:
+${scheduler_ip_list}
+  ports:
+  - name: http-metrics
+    port: 10251
+    protocol: TCP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
   name: kube-controller-manager
   namespace: kube-system
 subsets:
 - addresses:
-  - ip: ${ip}
+${controller_manager_ip_list}
   ports:
   - name: http-metrics
     port: 10252

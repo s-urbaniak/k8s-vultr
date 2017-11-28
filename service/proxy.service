@@ -9,7 +9,6 @@ EnvironmentFile=/run/metadata/coreos
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube proxy \
     --bind-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
-    --hostname-override=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
     --kubeconfig /etc/kubernetes/tls/kubeconfig \
     --cluster-cidr 10.2.0.0/16
 

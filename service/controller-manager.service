@@ -14,6 +14,7 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube controller-manager \
     --root-ca-file=/etc/kubernetes/tls/ca.crt \
     --service-account-private-key-file=/etc/kubernetes/tls/service_account.key \
     --leader-elect=true \
+    --leader-elect-resource-lock=configmaps \
     --kubeconfig=/etc/kubernetes/tls/kubeconfig \
     --cluster-cidr=10.2.0.0/16 \
     --allocate-node-cidrs=true \

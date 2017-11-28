@@ -1,7 +1,7 @@
 resource "digitalocean_droplet" "master" {
   count              = "${var.master_count}"
   image              = "${var.image_name}"
-  name               = "master-${local.cluster_name}-${count.index}"
+  name               = "master-${local.cluster_name}-${count.index}.${var.cluster_base_domain}"
   private_networking = true
   region             = "${var.region}"
   size               = "${var.master_size}"
@@ -12,7 +12,7 @@ resource "digitalocean_droplet" "master" {
 resource "digitalocean_droplet" "worker" {
   count              = "${var.worker_count}"
   image              = "${var.image_name}"
-  name               = "worker-${local.cluster_name}-${count.index}"
+  name               = "worker-${local.cluster_name}-${count.index}.${var.cluster_base_domain}"
   private_networking = true
   region             = "${var.region}"
   size               = "${var.worker_size}"
@@ -55,6 +55,23 @@ resource "digitalocean_firewall" "rules" {
       source_droplet_ids = [
         "${digitalocean_droplet.master.*.id}",
         "${digitalocean_droplet.worker.*.id}",
+      ]
+    },
+    {
+      protocol   = "tcp"
+      port_range = "2379" // etcd client port
+
+      source_droplet_ids = [
+        "${digitalocean_droplet.master.*.id}",
+        "${digitalocean_droplet.worker.*.id}",
+      ]
+    },
+    {
+      protocol   = "tcp"
+      port_range = "2380" // etcd peer port, only master droplets need this
+
+      source_droplet_ids = [
+        "${digitalocean_droplet.master.*.id}",
       ]
     },
     {

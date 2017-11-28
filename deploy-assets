@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+if [ -z "${KUBECONFIG}" ]; then
+    export KUBECONFIG=~/.kube/config
+fi
+
+kubectl apply -f ../../manifests
+
+kubectl create namespace monitoring
+
+kctl() {
+    kubectl --namespace monitoring "$@"
+}
+
+kctl apply -f ../../prometheus-operator
+
+# Wait for CRDs to be ready.
+printf "Waiting for Operator to register custom resource definitions..."
+until kctl get customresourcedefinitions servicemonitors.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
+until kctl get customresourcedefinitions prometheuses.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
+until kctl get customresourcedefinitions alertmanagers.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
+until kctl get servicemonitors.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
+until kctl get prometheuses.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
+until kctl get alertmanagers.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
+echo "done!"
+
+kubectl apply -f generated/manifests
+
+kctl create secret generic etcd-certs \
+     --from-file=generated/etcd/etcd-client.pem \
+     --from-file=generated/etcd/etcd-client-key.pem \
+     --from-file=generated/etcd/ca.pem 
+
+kctl apply -f ../../node-exporter
+kctl apply -f ../../kube-state-metrics
+kctl apply -f ../../grafana/grafana-credentials.yaml
+kctl apply -f ../../grafana
+find ../../prometheus -type f ! -name prometheus-k8s-roles.yaml ! -name prometheus-k8s-role-bindings.yaml -exec kubectl --namespace monitoring apply -f {} \;
+kubectl apply -f ../../prometheus/prometheus-k8s-roles.yaml
+kubectl apply -f ../../prometheus/prometheus-k8s-role-bindings.yaml
+kctl apply -f ../../alertmanager/

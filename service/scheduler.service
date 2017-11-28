@@ -9,8 +9,9 @@ EnvironmentFile=/run/metadata/coreos
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube scheduler \
     --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
-    --kubeconfig /etc/kubernetes/tls/kubeconfig \
-    --leader-elect \
+    --kubeconfig=/etc/kubernetes/tls/kubeconfig \
+    --leader-elect=true \
+    --leader-elect-resource-lock=configmaps \
     --feature-gates=PersistentLocalVolumes=true
 
 Restart=on-failure
