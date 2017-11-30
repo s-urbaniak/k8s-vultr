@@ -12,7 +12,7 @@ kctl() {
     kubectl --namespace monitoring "$@"
 }
 
-kctl apply -f ../../prometheus-operator
+kctl apply -f ../../manifests/prometheus-operator
 
 # Wait for CRDs to be ready.
 printf "Waiting for Operator to register custom resource definitions..."
@@ -31,11 +31,11 @@ kctl create secret generic etcd-certs \
      --from-file=generated/etcd/etcd-client-key.pem \
      --from-file=generated/etcd/ca.pem 
 
-kctl apply -f ../../node-exporter
-kctl apply -f ../../kube-state-metrics
-kctl apply -f ../../grafana/grafana-credentials.yaml
-kctl apply -f ../../grafana
-find ../../prometheus -type f ! -name prometheus-k8s-roles.yaml ! -name prometheus-k8s-role-bindings.yaml -exec kubectl --namespace monitoring apply -f {} \;
-kubectl apply -f ../../prometheus/prometheus-k8s-roles.yaml
-kubectl apply -f ../../prometheus/prometheus-k8s-role-bindings.yaml
-kctl apply -f ../../alertmanager/
+kctl apply -f ../../manifests/node-exporter
+kctl apply -f ../../manifests/kube-state-metrics
+kctl apply -f ../../manifests/grafana/grafana-credentials.yaml
+kctl apply -f ../../manifests/grafana
+find ../../manifests/prometheus -type f ! -name prometheus-k8s-roles.yaml ! -name prometheus-k8s-role-bindings.yaml -exec kubectl --namespace monitoring apply -f {} \;
+kubectl apply -f ../../manifests/prometheus/prometheus-k8s-roles.yaml
+kubectl apply -f ../../manifests/prometheus/prometheus-k8s-role-bindings.yaml
+kctl apply -f ../../manifests/alertmanager/
