@@ -38,7 +38,11 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     \
     --service-cluster-ip-range=${service_cidr} \
     \
-    --feature-gates=PersistentLocalVolumes=true
+    --feature-gates=PersistentLocalVolumes=true \
+    \
+    --requestheader-client-ca-file=/etc/kubernetes/tls/ca.crt \
+    --proxy-client-cert-file=/etc/kubernetes/tls/proxy_client.crt \
+    --proxy-client-key-file=/etc/kubernetes/tls/proxy_client.key
 
 Type=notify
 LimitNOFILE=65536
