@@ -42,7 +42,11 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --oidc-issuer-url=https://accounts.google.com \
     --oidc-username-claim=email \
     --oidc-client-id=${oidc_client_id} \
-    --runtime-config=admissionregistration.k8s.io/v1beta1=true
+    --runtime-config=admissionregistration.k8s.io/v1beta1=true \
+    \
+    --requestheader-client-ca-file=/etc/kubernetes/tls/ca.crt \
+    --proxy-client-cert-file=/etc/kubernetes/tls/proxy_client.crt \
+    --proxy-client-key-file=/etc/kubernetes/tls/proxy_client.key
 
 Type=notify
 LimitNOFILE=65536

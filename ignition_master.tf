@@ -20,6 +20,8 @@ data "ignition_config" "master" {
     "${data.ignition_file.api_kubelet_client_crt.id}",
     "${data.ignition_file.hostname.id}",
     "${data.ignition_file.resolv_conf.id}",
+    "${data.ignition_file.proxy_client_crt.id}",
+    "${data.ignition_file.proxy_client_key.id}",
   ]
 
   systemd = [
@@ -389,6 +391,26 @@ data "ignition_file" "service_account_key" {
 
   content {
     content = "${tls_private_key.service_account.private_key_pem}"
+  }
+}
+
+data "ignition_file" "proxy_client_crt" {
+  path       = "/etc/kubernetes/tls/proxy_client.crt"
+  mode       = 0644
+  filesystem = "root"
+
+  content {
+    content = "${tls_private_key.proxy_client.public_key_pem}"
+  }
+}
+
+data "ignition_file" "proxy_client_key" {
+  path       = "/etc/kubernetes/tls/proxy_client.key"
+  mode       = 0400
+  filesystem = "root"
+
+  content {
+    content = "${tls_private_key.proxy_client.private_key_pem}"
   }
 }
 
