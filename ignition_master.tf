@@ -10,6 +10,7 @@ data "ignition_config" "master" {
     "${data.ignition_file.api_etcd_client_crt.id}",
     "${data.ignition_file.api_etcd_client_key.id}",
     "${data.ignition_file.ca_crt.id}",
+    "${data.ignition_file.ca_key.id}",
     "${data.ignition_file.apiserver_key.id}",
     "${data.ignition_file.apiserver_crt.id}",
     "${data.ignition_file.service_account_crt.id}",
@@ -138,6 +139,16 @@ data "ignition_file" "ca_crt" {
 
   content {
     content = "${tls_self_signed_cert.kube_ca.cert_pem}"
+  }
+}
+
+data "ignition_file" "ca_key" {
+  path       = "/etc/kubernetes/tls/ca.key"
+  mode       = 0400
+  filesystem = "root"
+
+  content {
+    content = "${tls_private_key.kube_ca.private_key_pem}"
   }
 }
 

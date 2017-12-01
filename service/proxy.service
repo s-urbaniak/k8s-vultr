@@ -8,7 +8,7 @@ After=network.target hyperkube-download.service coreos-metadata.service apiserve
 EnvironmentFile=/run/metadata/coreos
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube proxy \
-    --bind-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+    --bind-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
     --kubeconfig /etc/kubernetes/tls/kubeconfig \
     --cluster-cidr 10.2.0.0/16
 

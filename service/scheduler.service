@@ -8,7 +8,7 @@ After=network.target hyperkube-download.service coreos-metadata.service apiserve
 EnvironmentFile=/run/metadata/coreos
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube scheduler \
-    --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+    --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
     --kubeconfig=/etc/kubernetes/tls/kubeconfig \
     --leader-elect=true \
     --leader-elect-resource-lock=configmaps \

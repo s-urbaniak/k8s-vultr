@@ -9,7 +9,7 @@ After=network.target hyperkube-download.service coreos-metadata.service
 EnvironmentFile=/run/metadata/coreos
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube kubelet \
-  --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+  --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
   --kubeconfig=/etc/kubernetes/tls/kubeconfig \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --require-kubeconfig=true \

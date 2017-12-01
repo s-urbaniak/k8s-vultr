@@ -9,7 +9,7 @@ EnvironmentFile=/run/metadata/coreos
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --bind-address=0.0.0.0 \
-    --advertise-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_1} \
+    --advertise-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
     --secure-port=443 \
     --insecure-port=0 \
     \
@@ -39,6 +39,7 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --service-cluster-ip-range=${service_cidr} \
     \
     --feature-gates=PersistentLocalVolumes=true \
+    --runtime-config=admissionregistration.k8s.io/v1beta1=true \
     \
     --requestheader-client-ca-file=/etc/kubernetes/tls/ca.crt \
     --proxy-client-cert-file=/etc/kubernetes/tls/proxy_client.crt \
