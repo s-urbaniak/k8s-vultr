@@ -2,11 +2,17 @@
 ConditionPathExists=!/opt/kubernetes/server/bin/hyperkube
 
 [Service]
-Type=oneshot
+Type=simple
+
+RemainAfterExit=true
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=1h
+
 ExecStartPre=/usr/bin/mkdir -p /opt
 ExecStartPre=/usr/bin/curl --retry 20 -L -o /opt/kubernetes-server-linux-amd64.tar.gz ${hyperkube_url}
 ExecStartPre=/usr/bin/tar xvzf /opt/kubernetes-server-linux-amd64.tar.gz -C /opt
-ExecStart=/usr/bin/echo "Downloaded kubernetes-server"
+ExecStart=/usr/bin/echo "download finished"
 
 [Install]
 WantedBy=multi-user.target

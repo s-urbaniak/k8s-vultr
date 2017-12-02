@@ -34,7 +34,7 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --authorization-mode=RBAC \
     --anonymous-auth=false \
     --allow-privileged=true \
-    --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+    --admission-control=Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota \
     \
     --service-cluster-ip-range=${service_cidr} \
     \
