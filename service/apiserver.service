@@ -39,7 +39,7 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --service-cluster-ip-range=${service_cidr} \
     \
     --feature-gates=PersistentLocalVolumes=true \
-    --runtime-config=admissionregistration.k8s.io/v1beta1=true \
+    --runtime-config=admissionregistration.k8s.io/v1beta1=true,admissionregistration.k8s.io/v1alpha1=true \
     \
     --requestheader-client-ca-file=/etc/kubernetes/tls/ca.crt \
     --proxy-client-cert-file=/etc/kubernetes/tls/proxy_client.crt \
