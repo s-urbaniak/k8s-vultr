@@ -7,7 +7,7 @@ After=network.target hyperkube-download.service coreos-metadata.service
 [Service]
 EnvironmentFile=/run/metadata/coreos
 
-ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
+ExecStart=/opt/hyperkube apiserver \
     --bind-address=0.0.0.0 \
     --advertise-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
     --secure-port=443 \

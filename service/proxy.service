@@ -1,8 +1,8 @@
 [Unit]
 Description=Kubernetes API Server
 
-Requires=hyperkube-download.service coreos-metadata.service apiserver.service
-After=network.target hyperkube-download.service coreos-metadata.service apiserver.service
+Requires=hyperkube-download.service coreos-metadata.service
+After=network.target hyperkube-download.service coreos-metadata.service
 
 [Service]
 EnvironmentFile=/run/metadata/coreos
