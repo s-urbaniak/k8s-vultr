@@ -9,9 +9,9 @@ Restart=on-failure
 RestartSec=10
 TimeoutStartSec=1h
 
-ExecStartPre=/usr/bin/mkdir -p /opt
-ExecStartPre=/usr/bin/curl --retry 20 -L -o /opt/kubernetes-server-linux-amd64.tar.gz ${hyperkube_url}
-ExecStartPre=/usr/bin/tar xvzf /opt/kubernetes-server-linux-amd64.tar.gz -C /opt
+ExecStartPre=/usr/bin/mkdir -p /opt/kubernetes/server/bin
+ExecStartPre=/usr/bin/curl --retry 20 -L -o /opt/kubernetes/server/bin/hyperkube ${hyperkube_url}
+ExecStartPre=/usr/bin/chmod +x /opt/kubernetes/server/bin/hyperkube
 ExecStart=/usr/bin/echo "download finished"
 
 [Install]

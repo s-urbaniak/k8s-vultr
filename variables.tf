@@ -67,10 +67,6 @@ variable "hyperkube_url" {
   type = "string"
 }
 
-variable "hyperkube_sha512" {
-  type = "string"
-}
-
 variable "service_cidr" {
   type    = "string"
   default = "10.3.0.0/16"
