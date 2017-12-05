@@ -34,16 +34,11 @@ ExecStart=/opt/hyperkube apiserver \
     --authorization-mode=RBAC \
     --anonymous-auth=false \
     --allow-privileged=true \
-    --admission-control=Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota \
+    --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
     \
     --service-cluster-ip-range=${service_cidr} \
     \
-    --feature-gates=PersistentLocalVolumes=true \
-    --runtime-config=admissionregistration.k8s.io/v1beta1=true,admissionregistration.k8s.io/v1alpha1=true \
-    \
-    --requestheader-client-ca-file=/etc/kubernetes/tls/ca.crt \
-    --proxy-client-cert-file=/etc/kubernetes/tls/proxy_client.crt \
-    --proxy-client-key-file=/etc/kubernetes/tls/proxy_client.key
+    --feature-gates=PersistentLocalVolumes=true
 
 Type=notify
 LimitNOFILE=65536
