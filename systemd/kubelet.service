@@ -2,14 +2,16 @@
 Description=Kubernetes kubelet
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
-Requires=hyperkube-download.service coreos-metadata.service
-After=network.target hyperkube-download.service coreos-metadata.service
+Requires=hyperkube-download.service vultr-metadata.service
+After=network.target hyperkube-download.service vultr-metadata.service
 
 [Service]
-EnvironmentFile=/run/metadata/coreos
+EnvironmentFile=/run/vultr-metadata
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube kubelet \
-  --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
+  --address=$${LOCAL_IPV4} \
+  --node-ip=$${LOCAL_IPV4} \
+  --hostname-override=$${HOSTNAME} \
   --kubeconfig=/etc/kubernetes/tls/kubeconfig \
   --pod-manifest-path=/etc/kubernetes/manifests \
   --require-kubeconfig=true \

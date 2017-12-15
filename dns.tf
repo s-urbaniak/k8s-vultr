@@ -3,29 +3,32 @@ data "template_file" "master_fqdn" {
   template = "master-${local.cluster_name}-${count.index}.${var.cluster_base_domain}"
 }
 
-resource "digitalocean_record" "master" {
-  count  = "${var.master_count}"
+resource "vultr_dns_record" "master" {
+  count = "${var.master_count}"
+
   domain = "${var.cluster_base_domain}"
   name   = "master-${local.cluster_name}-${count.index}"
   ttl    = 600
   type   = "A"
-  value  = "${digitalocean_droplet.master.*.ipv4_address_private[count.index]}"
+  data   = "${vultr_instance.master.*.ipv4_private_address[count.index]}"
 }
 
-resource "digitalocean_record" "worker" {
-  count  = "${var.worker_count}"
+resource "vultr_dns_record" "worker" {
+  count = "${var.worker_count}"
+
   domain = "${var.cluster_base_domain}"
   name   = "worker-${local.cluster_name}-${count.index}"
   ttl    = 600
   type   = "A"
-  value  = "${digitalocean_droplet.worker.*.ipv4_address_private[count.index]}"
+  data   = "${vultr_instance.worker.*.ipv4_private_address[count.index]}"
 }
 
-resource "digitalocean_record" "api" {
-  count  = "${var.master_count}"
+resource "vultr_dns_record" "api" {
+  count = "${var.master_count}"
+
   domain = "${var.cluster_base_domain}"
   name   = "api-${local.cluster_name}"
   ttl    = 600
   type   = "A"
-  value  = "${digitalocean_droplet.master.*.ipv4_address[count.index]}"
+  data   = "${vultr_instance.master.*.ipv4_address[count.index]}"
 }

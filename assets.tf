@@ -14,7 +14,7 @@ data "template_file" "etcd_endpoints" {
   count = "${var.master_count}"
 
   template = <<EOF
-  - ip: ${digitalocean_droplet.master.*.ipv4_address_private[count.index]}
+  - ip: ${vultr_instance.master.*.ipv4_private_address[count.index]}
 EOF
 }
 
@@ -22,8 +22,8 @@ data "template_file" "master_endpoints" {
   count = "${var.master_count}"
 
   template = <<EOF
-  - ip: ${digitalocean_droplet.master.*.ipv4_address_private[count.index]}
-    nodeName: ${digitalocean_droplet.master.*.name[count.index]}
+  - ip: ${vultr_instance.master.*.ipv4_private_address[count.index]}
+    nodeName: ${vultr_instance.master.*.name[count.index]}
 EOF
 }
 

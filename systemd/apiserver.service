@@ -1,15 +1,15 @@
 [Unit]
 Description=Kubernetes API Server
 
-Requires=hyperkube-download.service coreos-metadata.service
-After=network.target hyperkube-download.service coreos-metadata.service
+Requires=hyperkube-download.service vultr-metadata.service
+After=network.target hyperkube-download.service vultr-metadata.service
 
 [Service]
-EnvironmentFile=/run/metadata/coreos
+EnvironmentFile=/run/vultr-metadata
 
-ExecStart=/opt/hyperkube apiserver \
+ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --bind-address=0.0.0.0 \
-    --advertise-address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
+    --advertise-address=$${LOCAL_IPV4} \
     --secure-port=443 \
     --insecure-port=0 \
     \

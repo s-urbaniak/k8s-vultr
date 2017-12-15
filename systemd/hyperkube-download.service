@@ -10,8 +10,6 @@ RestartSec=10
 TimeoutStartSec=1h
 
 ExecStartPre=/usr/bin/mkdir -p /opt
-ExecStartPre=/usr/bin/curl --retry 20 -L -o /opt/hyperkube https://github.com/s-urbaniak/k8s-digitalocean/releases/download/0.0.1/hyperkube
-ExecStartPre=/usr/bin/chmod +x /opt/hyperkube
 ExecStartPre=/usr/bin/curl --retry 20 -L -o /opt/kubernetes-server-linux-amd64.tar.gz ${hyperkube_url}
 ExecStartPre=/usr/bin/tar xvzf /opt/kubernetes-server-linux-amd64.tar.gz -C /opt
 ExecStart=/usr/bin/echo "download finished"

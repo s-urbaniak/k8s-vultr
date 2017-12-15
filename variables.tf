@@ -3,32 +3,12 @@ variable "master_count" {
   default = "1"
 }
 
-variable "master_size" {
-  type    = "string"
-  default = "1gb"
-}
-
 variable "worker_count" {
   type    = "string"
   default = "1"
 }
 
-variable "worker_size" {
-  type    = "string"
-  default = "1gb"
-}
-
-variable "image_name" {
-  type    = "string"
-  default = "coreos-stable"
-}
-
-variable "region" {
-  type    = "string"
-  default = "fra1"
-}
-
-variable "ssh_key_id_list" {
+variable "ssh_authorized_key_list" {
   type = "list"
 }
 

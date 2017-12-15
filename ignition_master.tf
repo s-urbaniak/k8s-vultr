@@ -18,8 +18,8 @@ data "ignition_config" "master" {
     "${data.ignition_file.kubeconfig.id}",
     "${data.ignition_file.api_kubelet_client_key.id}",
     "${data.ignition_file.api_kubelet_client_crt.id}",
-    "${data.ignition_file.proxy_client_crt.id}",
-    "${data.ignition_file.proxy_client_key.id}",
+    "${data.ignition_file.hostname.id}",
+    "${data.ignition_file.resolv_conf.id}",
   ]
 
   systemd = [
@@ -30,13 +30,82 @@ data "ignition_config" "master" {
     "${data.ignition_systemd_unit.proxy.id}",
     "${data.ignition_systemd_unit.scheduler.id}",
     "${data.ignition_systemd_unit.controller_manager.id}",
+    "${data.ignition_systemd_unit.vultr_metadata.id}",
   ]
+
+  networkd = [
+    "${data.ignition_networkd_unit.eth1.id}",
+  ]
+
+  users = [
+    "${data.ignition_user.core.id}",
+  ]
+}
+
+data "ignition_file" "resolv_conf" {
+  path       = "/etc/resolv.conf"
+  mode       = 0644
+  uid        = 0
+  filesystem = "root"
+
+  content {
+    content = <<EOF
+search ${var.cluster_base_domain}
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+EOF
+  }
+}
+
+data "ignition_file" "hostname" {
+  count      = "${var.master_count}"
+  path       = "/etc/hostname"
+  mode       = 0644
+  uid        = 0
+  filesystem = "root"
+
+  content {
+    content = "master-${local.cluster_name}-${count.index}"
+  }
+}
+
+// eth1 private network card setup
+
+data "ignition_networkd_unit" "eth1" {
+  name = "eth1.network"
+
+  // PRIVATE_IPV4 will be replaced by the install.service systemd service unit
+  content = <<EOF
+[Match]
+Name=eth1
+
+[Network]
+Address=PRIVATE_IPV4/16
+
+[Link]
+MTUBytes=1450
+EOF
+}
+
+// metadata service
+
+data "ignition_systemd_unit" "vultr_metadata" {
+  content = "${file("${path.module}/systemd/vultr-metadata.service")}"
+  enabled = true
+  name    = "vultr-metadata.service"
+}
+
+// core user
+
+data "ignition_user" "core" {
+  name                = "core"
+  ssh_authorized_keys = "${var.ssh_authorized_key_list}"
 }
 
 // hyperkube / apiserver
 
 data "template_file" "hyperkube" {
-  template = "${file("${path.module}/service/hyperkube-download.service")}"
+  template = "${file("${path.module}/systemd/hyperkube-download.service")}"
 
   vars = {
     hyperkube_url = "${var.hyperkube_url}"
@@ -51,7 +120,7 @@ data "ignition_systemd_unit" "hyperkube_download" {
 
 data "template_file" "apiserver" {
   count    = "${var.master_count}"
-  template = "${file("${path.module}/service/apiserver.service")}"
+  template = "${file("${path.module}/systemd/apiserver.service")}"
 
   vars = {
     service_cidr = "${var.service_cidr}"
@@ -67,7 +136,7 @@ data "ignition_systemd_unit" "apiserver" {
 }
 
 data "template_file" "kubelet" {
-  template = "${file("${path.module}/service/kubelet.service")}"
+  template = "${file("${path.module}/systemd/kubelet.service")}"
 
   vars {
     flags = "--node-labels=node-role.kubernetes.io/master --register-with-taints=node-role.kubernetes.io/master=:NoSchedule"
@@ -81,7 +150,7 @@ data "ignition_systemd_unit" "kubelet" {
 }
 
 data "template_file" "proxy" {
-  template = "${file("${path.module}/service/proxy.service")}"
+  template = "${file("${path.module}/systemd/proxy.service")}"
 }
 
 data "ignition_systemd_unit" "proxy" {
@@ -91,7 +160,7 @@ data "ignition_systemd_unit" "proxy" {
 }
 
 data "template_file" "scheduler" {
-  template = "${file("${path.module}/service/scheduler.service")}"
+  template = "${file("${path.module}/systemd/scheduler.service")}"
 }
 
 data "ignition_systemd_unit" "scheduler" {
@@ -101,7 +170,7 @@ data "ignition_systemd_unit" "scheduler" {
 }
 
 data "template_file" "controller_manager" {
-  template = "${file("${path.module}/service/controller-manager.service")}"
+  template = "${file("${path.module}/systemd/controller-manager.service")}"
 }
 
 data "ignition_systemd_unit" "controller_manager" {
@@ -319,26 +388,6 @@ data "ignition_file" "service_account_key" {
 
   content {
     content = "${tls_private_key.service_account.private_key_pem}"
-  }
-}
-
-data "ignition_file" "proxy_client_crt" {
-  path       = "/etc/kubernetes/tls/proxy_client.crt"
-  mode       = 0644
-  filesystem = "root"
-
-  content {
-    content = "${tls_private_key.proxy_client.public_key_pem}"
-  }
-}
-
-data "ignition_file" "proxy_client_key" {
-  path       = "/etc/kubernetes/tls/proxy_client.key"
-  mode       = 0400
-  filesystem = "root"
-
-  content {
-    content = "${tls_private_key.proxy_client.private_key_pem}"
   }
 }
 

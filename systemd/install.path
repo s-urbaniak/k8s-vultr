@@ -1,0 +1,9 @@
+[Unit]
+Description=Trigger for install.service
+
+[Path]
+PathExists=/home/install/ignition
+Unit=install.service
+
+[Install]
+WantedBy=multi-user.target

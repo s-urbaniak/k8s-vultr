@@ -1,14 +1,14 @@
 [Unit]
 Description=Kubernetes API Server
 
-Requires=hyperkube-download.service coreos-metadata.service apiserver.service
-After=network.target hyperkube-download.service coreos-metadata.service apiserver.service
+Requires=hyperkube-download.service vultr-metadata.service apiserver.service
+After=network.target hyperkube-download.service vultr-metadata.service apiserver.service
 
 [Service]
-EnvironmentFile=/run/metadata/coreos
+EnvironmentFile=/run/vultr-metadata
 
 ExecStart=/opt/kubernetes/server/bin/hyperkube controller-manager \
-    --address=$${COREOS_DIGITALOCEAN_IPV4_PRIVATE_0} \
+    --address=$${LOCAL_IPV4} \
     --cluster-signing-cert-file=/etc/kubernetes/tls/ca.crt \
     --cluster-signing-key-file=/etc/kubernetes/tls/ca.key \
     --root-ca-file=/etc/kubernetes/tls/ca.crt \

@@ -1,0 +1,11 @@
+[Unit]
+Description=Install Container Linux
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'sed -i "s/PRIVATE_IPV4/$(curl -s http://169.254.169.254/v1.json | jq -r '"'"'.interfaces[] | select(."network-type" | contains("private")) | .ipv4.address'"'"')/g" /home/install/ignition'
+ExecStart=/usr/bin/coreos-install -d /dev/vda -i /home/install/ignition
+ExecStart=/usr/sbin/reboot
+
+[Install]
+WantedBy=multi-user.target
