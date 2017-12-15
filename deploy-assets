@@ -4,7 +4,7 @@ if [ -z "${KUBECONFIG}" ]; then
     export KUBECONFIG=~/.kube/config
 fi
 
-kubectl apply -f ../../manifests
+kubectl apply -f generated/manifests
 
 kubectl create namespace monitoring
 
@@ -12,7 +12,7 @@ kctl() {
     kubectl --namespace monitoring "$@"
 }
 
-kctl apply -f ../../manifests/prometheus-operator
+kctl apply -f generated/manifests/prometheus-operator
 
 # Wait for CRDs to be ready.
 printf "Waiting for Operator to register custom resource definitions..."
@@ -24,18 +24,21 @@ until kctl get prometheuses.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; 
 until kctl get alertmanagers.monitoring.coreos.com > /dev/null 2>&1; do sleep 1; printf "."; done
 echo "done!"
 
-kubectl apply -f generated/manifests
+kubectl apply -f generated/manifests/etcd-prometheus
+kubectl apply -f generated/manifests/control-plane-prometheus
 
 kctl create secret generic etcd-certs \
      --from-file=generated/etcd/etcd-client.pem \
      --from-file=generated/etcd/etcd-client-key.pem \
      --from-file=generated/etcd/ca.pem 
 
-kctl apply -f ../../manifests/node-exporter
-kctl apply -f ../../manifests/kube-state-metrics
-kctl apply -f ../../manifests/grafana/grafana-credentials.yaml
-kctl apply -f ../../manifests/grafana
-find ../../manifests/prometheus -type f ! -name prometheus-k8s-roles.yaml ! -name prometheus-k8s-role-bindings.yaml -exec kubectl --namespace monitoring apply -f {} \;
-kubectl apply -f ../../manifests/prometheus/prometheus-k8s-roles.yaml
-kubectl apply -f ../../manifests/prometheus/prometheus-k8s-role-bindings.yaml
-kctl apply -f ../../manifests/alertmanager/
+kctl apply -f generated/manifests/node-exporter
+kctl apply -f generated/manifests/kube-state-metrics
+kctl apply -f generated/manifests/grafana/grafana-credentials.yaml
+kctl apply -f generated/manifests/grafana
+
+find generated/manifests/prometheus -type f ! -name prometheus-k8s-roles.yaml ! -name prometheus-k8s-role-bindings.yaml -exec kubectl --namespace monitoring apply -f {} \;
+kubectl apply -f generated/manifests/prometheus/prometheus-k8s-roles.yaml
+kubectl apply -f generated/manifests/prometheus/prometheus-k8s-role-bindings.yaml
+
+kctl apply -f generated/manifests/alertmanager/

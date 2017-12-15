@@ -347,7 +347,7 @@ data "template_file" "initial_cluster" {
 
 data "template_file" "etcd" {
   count    = "${var.master_count}"
-  template = "${file("${path.module}/dropin/40-etcd-cluster.conf")}"
+  template = "${file("${path.module}/systemd/40-etcd-cluster.conf")}"
 
   vars = {
     advertise_client_urls       = "${data.template_file.advertise_client_url.*.rendered[count.index]}"

@@ -27,31 +27,15 @@ data "template_file" "master_endpoints" {
 EOF
 }
 
-data "template_file" "etcd_prom" {
-  template = "${file("${path.module}/manifests/07-etcd-prom.yaml.tpl")}"
+resource "template_dir" "bootkube" {
+  source_dir      = "${path.module}/manifests"
+  destination_dir = "./generated/manifests"
 
   vars = {
-    ip_list = "${join("\n", data.template_file.etcd_endpoints.*.rendered)}"
-  }
-}
-
-data "template_file" "control_plane_endpoints" {
-  template = "${file("${path.module}/manifests/06-control-plane-endpoints.yaml.tpl")}"
-
-  vars = {
+    ip_list                    = "${join("\n", data.template_file.etcd_endpoints.*.rendered)}"
     scheduler_ip_list          = "${join("\n", data.template_file.master_endpoints.*.rendered)}"
     controller_manager_ip_list = "${join("\n", data.template_file.master_endpoints.*.rendered)}"
   }
-}
-
-resource "local_file" "etcd_prom" {
-  content  = "${data.template_file.etcd_prom.rendered}"
-  filename = "./generated/manifests/07-etcd-prom.yaml"
-}
-
-resource "local_file" "control_plane_endpoints" {
-  content  = "${data.template_file.control_plane_endpoints.rendered}"
-  filename = "./generated/manifests/06-control-plane-endpoints.yaml"
 }
 
 resource "local_file" "kubeconfig" {
