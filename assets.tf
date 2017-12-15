@@ -35,6 +35,7 @@ resource "template_dir" "bootkube" {
     ip_list                    = "${join("\n", data.template_file.etcd_endpoints.*.rendered)}"
     scheduler_ip_list          = "${join("\n", data.template_file.master_endpoints.*.rendered)}"
     controller_manager_ip_list = "${join("\n", data.template_file.master_endpoints.*.rendered)}"
+    etcd_server_name           = "${data.template_file.master_fqdn.*.rendered[0]}"
   }
 }
 

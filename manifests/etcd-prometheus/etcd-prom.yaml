@@ -45,7 +45,7 @@ spec:
       caFile: /etc/prometheus/secrets/etcd-certs/ca.pem
       certFile: /etc/prometheus/secrets/etcd-certs/etcd-client.pem
       keyFile: /etc/prometheus/secrets/etcd-certs/etcd-client-key.pem
-      serverName: master-175d-0.sur.space
+      serverName: ${etcd_server_name}
   selector:
     matchLabels:
       k8s-app: etcd
