@@ -51,3 +51,15 @@ variable "service_cidr" {
   type    = "string"
   default = "10.3.0.0/16"
 }
+
+variable "oauth_client_id" {
+  type = "string"
+}
+
+variable "oauth_client_secret" {
+  type = "string"
+}
+
+variable "oauth_cookie_secret" {
+  type = "string"
+}

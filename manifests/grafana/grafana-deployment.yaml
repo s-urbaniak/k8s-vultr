@@ -2,6 +2,7 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: grafana
+  namespace: monitoring
 spec:
   replicas: 1
   template:
@@ -13,6 +14,8 @@ spec:
       - name: grafana
         image: grafana/grafana:4.5.2
         env:
+        - name: GF_SERVER_ROOT_URL
+          value: "%(protocol)s://%(domain)s:/grafana"
         - name: GF_AUTH_BASIC_ENABLED
           value: "true"
         - name: GF_AUTH_ANONYMOUS_ENABLED

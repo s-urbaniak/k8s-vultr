@@ -27,7 +27,7 @@ data "template_file" "master_endpoints" {
 EOF
 }
 
-resource "template_dir" "bootkube" {
+resource "template_dir" "manifests" {
   source_dir      = "${path.module}/manifests"
   destination_dir = "./generated/manifests"
 
@@ -36,6 +36,10 @@ resource "template_dir" "bootkube" {
     scheduler_ip_list          = "${join("\n", data.template_file.master_endpoints.*.rendered)}"
     controller_manager_ip_list = "${join("\n", data.template_file.master_endpoints.*.rendered)}"
     etcd_server_name           = "${data.template_file.master_fqdn.*.rendered[0]}"
+    oidc_client_id             = "${var.oidc_client_id}"
+    oidc_client_secret         = "${var.oidc_client_secret}"
+    oidc_cookie_secret         = "${var.oidc_cookie_secret}"
+    cluster_base_domain        = "${var.cluster_base_domain}"
   }
 }
 

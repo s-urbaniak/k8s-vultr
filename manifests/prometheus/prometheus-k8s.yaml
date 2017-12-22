@@ -2,10 +2,11 @@ apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
   name: k8s
+  namespace: monitoring
   labels:
     prometheus: k8s
 spec:
-  externalUrl: http://127.0.0.1:8001/api/v1/proxy/namespaces/monitoring/services/prometheus-k8s:web/
+  externalUrl: https://${cluster_base_domain}/prometheus
   replicas: 2
   secrets:
   - etcd-certs

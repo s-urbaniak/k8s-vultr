@@ -34,11 +34,15 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     --authorization-mode=RBAC \
     --anonymous-auth=false \
     --allow-privileged=true \
-    --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \
+    --admission-control=Initializers,NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota \
     \
     --service-cluster-ip-range=${service_cidr} \
     \
     --feature-gates=PersistentLocalVolumes=true
+    --oidc-issuer-url=https://accounts.google.com \
+    --oidc-username-claim=email \
+    --oidc-client-id=${oidc_client_id} \
+    --runtime-config=admissionregistration.k8s.io/v1beta1=true
 
 Type=notify
 LimitNOFILE=65536

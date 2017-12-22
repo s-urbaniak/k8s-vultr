@@ -123,8 +123,9 @@ data "template_file" "apiserver" {
   template = "${file("${path.module}/systemd/apiserver.service")}"
 
   vars = {
-    service_cidr = "${var.service_cidr}"
-    etcd_servers = "${join(",", data.template_file.advertise_client_url.*.rendered)}"
+    service_cidr   = "${var.service_cidr}"
+    etcd_servers   = "${join(",", data.template_file.advertise_client_url.*.rendered)}"
+    oidc_client_id = "${var.oidc_client_id}"
   }
 }
 

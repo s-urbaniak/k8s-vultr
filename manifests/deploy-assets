@@ -4,7 +4,11 @@ if [ -z "${KUBECONFIG}" ]; then
     export KUBECONFIG=~/.kube/config
 fi
 
+# common manifests
+
 kubectl apply -f generated/manifests
+
+# monitoring
 
 kubectl create namespace monitoring
 
@@ -42,3 +46,29 @@ kubectl apply -f generated/manifests/prometheus/prometheus-k8s-roles.yaml
 kubectl apply -f generated/manifests/prometheus/prometheus-k8s-role-bindings.yaml
 
 kctl apply -f generated/manifests/alertmanager/
+
+# oauth2 proxy
+
+kubectl apply -f generated/manifests/oauth-proxy
+
+# ingress
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/namespace.yaml \
+    | kubectl apply -f -
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/default-backend.yaml \
+    | kubectl apply -f -
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/configmap.yaml \
+    | kubectl apply -f -
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/tcp-services-configmap.yaml \
+    | kubectl apply -f -
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/udp-services-configmap.yaml \
+    | kubectl apply -f -
+
+curl https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/rbac.yaml \
+    | kubectl apply -f -
+
+kubectl apply -f generated/manifests/ingress

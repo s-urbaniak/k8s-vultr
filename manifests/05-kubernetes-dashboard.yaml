@@ -111,6 +111,31 @@ spec:
         - name: kubernetes-dashboard-certs
           mountPath: /certs
       containers:
+      - image: docker.io/surbaniak/oauth2_proxy:b5e5d01
+        imagePullPolicy: Always
+        args:
+        - -provider=google
+        - -authenticated-emails-file=/etc/oauth/whitelist
+        - -upstream=https://127.0.0.1:8443
+        - -http-address=0.0.0.0:4180
+        - -pass-access-token=true
+        - -ssl-insecure-skip-verify
+        - -external-url=https://${cluster_base_domain}/dashboard
+        env:
+        - name: OAUTH2_PROXY_CLIENT_ID
+          value: ${oidc_client_id}
+        - name: OAUTH2_PROXY_CLIENT_SECRET
+          value: ${oidc_client_secret}
+        # python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          value: ${oidc_cookie_secret}
+        name: oauth2-proxy
+        ports:
+        - containerPort: 4180
+          protocol: TCP
+        volumeMounts:
+        - name: users
+          mountPath: /etc/oauth
       - name: kubernetes-dashboard
         image: gcr.io/google_containers/kubernetes-dashboard-amd64:v1.7.1
         ports:
@@ -138,6 +163,9 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 30
       volumes:
+      - name: users
+        configMap:
+          name: oauth-users
       - name: kubernetes-dashboard-certs
         secret:
           secretName: kubernetes-dashboard-certs
@@ -150,8 +178,6 @@ spec:
         effect: NoSchedule
 
 ---
-# ------------------- Dashboard Service ------------------- #
-
 kind: Service
 apiVersion: v1
 metadata:
@@ -161,7 +187,32 @@ metadata:
   namespace: kube-system
 spec:
   ports:
-    - port: 443
-      targetPort: 8443
+    - port: 80
+      targetPort: 4180
   selector:
     k8s-app: kubernetes-dashboard
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: dashboard
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # see https://github.com/kubernetes/ingress-nginx/issues/683, https://github.com/kubernetes/ingress-nginx/issues/646
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      rewrite ^(/dashboard)$ $1/ permanent;
+spec:
+  tls:
+  - hosts:
+    - ${cluster_base_domain}
+    secretName: ${cluster_base_domain}
+  rules:
+  - host: ${cluster_base_domain}
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 80
+        path: /dashboard

@@ -2,9 +2,10 @@ apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
   name: main
+  namespace: monitoring
   labels:
     alertmanager: main
 spec:
   replicas: 3
   version: v0.9.1
-  externalUrl: http://127.0.0.1:8001/api/v1/proxy/namespaces/monitoring/services/alertmanager-main:web/
+  externalUrl: https://${cluster_base_domain}/alertmanager
