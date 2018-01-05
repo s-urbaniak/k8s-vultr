@@ -52,14 +52,14 @@ variable "service_cidr" {
   default = "10.3.0.0/16"
 }
 
-variable "oauth_client_id" {
+variable "oidc_client_id" {
   type = "string"
 }
 
-variable "oauth_client_secret" {
+variable "oidc_client_secret" {
   type = "string"
 }
 
-variable "oauth_cookie_secret" {
+variable "oidc_cookie_secret" {
   type = "string"
 }

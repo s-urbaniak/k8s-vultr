@@ -38,7 +38,7 @@ ExecStart=/opt/kubernetes/server/bin/hyperkube apiserver \
     \
     --service-cluster-ip-range=${service_cidr} \
     \
-    --feature-gates=PersistentLocalVolumes=true
+    --feature-gates=PersistentLocalVolumes=true \
     --oidc-issuer-url=https://accounts.google.com \
     --oidc-username-claim=email \
     --oidc-client-id=${oidc_client_id} \
