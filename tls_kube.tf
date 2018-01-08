@@ -95,6 +95,5 @@ resource "tls_locally_signed_cert" "proxy_client" {
     "key_encipherment",
     "digital_signature",
     "client_auth",
-    "server_auth",
   ]
 }

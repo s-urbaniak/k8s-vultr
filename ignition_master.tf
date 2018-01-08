@@ -400,7 +400,7 @@ data "ignition_file" "proxy_client_crt" {
   filesystem = "root"
 
   content {
-    content = "${tls_private_key.proxy_client.public_key_pem}"
+    content = "${tls_locally_signed_cert.proxy_client.cert_pem}"
   }
 }
 
